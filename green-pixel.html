@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list</title>
+    <style>
+        /* INPUT CONTAINER */
+        :root{
+            --dark-color: #39812c;
+            --saturated-color : rgb(170, 255, 161);
+            --light-color: rgb(186, 255, 178);
+        }
+
+        /* FONTS */
+
+        @font-face {
+            font-family: 'Jersey15';
+            src: url('../fonts/Jersey15-Regular.ttf') format('truetype'); 
+        }
+
+        @font-face {
+            font-family: 'JosefinSans';
+            src: url('../fonts/JosefinSans-VariableFont_wght.ttf') format('truetype');
+        }
+
+        body {
+            background-color: transparent;
+        }
+
+
+        .title {
+            font-family: 'Jersey15';
+            font-size: 50px;
+            color: rgb(58, 58, 58);
+        }
+
+        .text {
+            font-family: 'JosefinSans';
+            
+            font-size: 25px;
+        }
+
+        .to-do-list {
+            width: 500px;
+            height: fit-content;
+        }
+        .insert {
+            background-color: var(--saturated-color);
+            border-radius: 10px 10px 0px 0px;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: row;
+            text-align: center;
+            width: 100%;
+            height: 50px;
+            gap: 50px;
+            border-radius: 10px 10px 0px 0px;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+        .input-task {
+            border-radius: 20px;
+            padding: 10px;
+            width: 200px;
+        }
+
+        input {
+            border-style : none;
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            height: 40px;
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            transition: transform 3 ease-in-out;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+
+        /* TASKS */
+
+        .task-container {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            width: 100%;
+        }
+
+        li, ul {
+            display: flex;
+        }
+
+        .new-tasks {
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-right: 40px;
+            align-items: center;
+        }
+
+        .new-tasks button {
+            padding: 5px;
+            width: 40px;
+            height: 40px;
+            font-size: 30px;
+        }
+
+        .tasks-container, .tasks {
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+        }
+
+    </style>   
+</head>
+
+<body>
+
+    <div class="to-do-list">
+        <div class="insert">
+            <h1 class="title">To do list</h1>
+            <div class="input-container">
+                <input class="input-task text" placeholder="Insert task...">
+                <button class="text" onclick="update()">Insert</button>
+            </div>
+            
+        </div>
+        <div class="tasks-container">
+            <ul class="tasks text">
+
+            </ul>
+        </div>
+    </div>
+    <script>
+        var input = document.querySelector(".input-task");
+        var tasks = document.querySelector(".tasks");
+        var liList = document.getElementsByTagName("LI");
+        var taskIndex = 0;
+        var activeTasks = [];
+
+        function update() {
+            var newTaskDiv = document.createElement("div");
+            var newTask = document.createElement("li");
+            var closeBtn = document.createElement("button");
+
+            closeBtn.innerText = "\u00D7";
+            closeBtn.classList.add("close");
+            closeBtn.onclick = function () {
+                close(newTaskDiv);
+            };
+
+            newTask.innerText = input.value;
+            newTask.classList.add("task-text");
+
+            newTaskDiv.classList.add("new-tasks");
+            newTaskDiv.id = taskIndex;
+            newTaskDiv.setAttribute("draggable", "true");
+
+            if (activeTasks.length % 2 != 0) {
+                newTaskDiv.style.backgroundColor = "rgb(186, 255, 178)";
+            } else {
+                newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
+            }
+
+            newTaskDiv.appendChild(newTask);
+            newTaskDiv.appendChild(closeBtn);
+            tasks.appendChild(newTaskDiv);
+            taskIndex++;
+            activeTasks.push(newTaskDiv);
+            console.log(activeTasks);
+        }
+
+        function close(newTaskDiv) {
+            //let done = document.getElementById(String(index));
+            newTaskDiv.style.display = "none";
+            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
+            updateColors()
+            console.log(activeTasks);
+        }
+
+        function updateColors() {
+            for (let i = 0; i < activeTasks.length; i++) {
+                if (activeTasks[i] != null) {
+                    if (i % 2 != 0) {
+                        activeTasks[i].style.backgroundColor = "rgb(186, 255, 178)";
+                    } else {
+                        activeTasks[i].style.backgroundColor = "rgb(255, 255, 255)";
+                    }
+                    
+                }
+
+            }
+        }
+
+        // draw or undraw a line through on tasks while clicked
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("new-tasks")) {
+                let children = event.target.children;
+                for (let i = 0; i < children.length; i++) {
+                    let child = children[i];
+                    let getStyle = getComputedStyle(child);
+
+                    if (child.tagName === "LI") { 
+                        console.log("getStyle.textDecoration", getStyle.textDecoration);
+                        if (getStyle.textDecoration.startsWith("line-through")) {
+                            child.style.textDecoration = "none";
+                        } else {
+                            child.style.textDecoration = "line-through"; 
+                        }
+                        
+                    }
+                }
+
+            }
+        });
+
+        // mark and unmark task as active
+        document.addEventListener('dblclick', function() {
+            if (event.target.classList.contains("new-tasks")) {
+                let getStyle = getComputedStyle(event.target);
+                if (getStyle.borderStyle == "none") {
+                    event.target.style.borderColor = "#39812c";
+                    event.target.style.borderWidth = "3px";
+                    event.target.style.borderStyle = "solid";
+                } else {
+                    event.target.style.borderStyle = "none";
+                }
+                console.log("db click");
+                
+            }
+        })
+
+        // drag and drop functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            let draggedItem = null;
+
+            document.addEventListener("dragstart", function (event) {
+                if (event.target.classList.contains("new-tasks")) {
+                    draggedItem = event.target;
+                    setTimeout(() => event.target.style.display = "none", 0);
+                }
+            });
+
+            document.addEventListener("dragover", function (event) {
+                event.preventDefault(); 
+            });
+
+            document.addEventListener("drop", function (event) {
+                event.preventDefault();
+                if (event.target.classList.contains("new-tasks")) {
+                    let parent = event.target.parentNode;
+                    let referenceNode = event.target.nextSibling === draggedItem ? event.target.nextSibling.nextSibling : event.target;
+                    parent.insertBefore(draggedItem, referenceNode);
+                }
+                
+                // Update active tasks array 
+                activeTasks = Array.from(document.querySelectorAll(".new-tasks"));
+
+                draggedItem.style.display = "flex";
+                draggedItem = null;
+
+                updateColors();
+            });
+
+            document.addEventListener("dragend", function (event) {
+                if (draggedItem) {
+                    draggedItem.style.display = "flex";
+                }
+            });
+        });        
+
+        document.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                update();
+            }
+        })
+
+    </script>
+</body>
+</html>
