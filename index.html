@@ -146,7 +146,7 @@
         var tasks = document.querySelector(".tasks");
         var liList = document.getElementsByTagName("LI");
         var taskIndex = 0;
-        var alternate = false;
+        var activeTasks = [];
 
         function update() {
             var newTaskDiv = document.createElement("div");
@@ -165,21 +165,40 @@
             newTaskDiv.classList.add("new-tasks");
             newTaskDiv.id = taskIndex;
 
-            if (alternate) {
+            if (activeTasks.length % 2 != 0) {
                 newTaskDiv.style.backgroundColor = "rgb(178, 255, 255)";
+            } else {
+                newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
             }
-
-            alternate = !alternate;
 
             newTaskDiv.appendChild(newTask);
             newTaskDiv.appendChild(closeBtn);
             tasks.appendChild(newTaskDiv);
             taskIndex++;
+            activeTasks.push(newTaskDiv);
+            console.log(activeTasks);
         }
 
         function close(newTaskDiv) {
             //let done = document.getElementById(String(index));
             newTaskDiv.style.display = "none";
+            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
+            updateColors()
+            console.log(activeTasks);
+        }
+
+        function updateColors() {
+            for (let i = 0; i < activeTasks.length; i++) {
+                if (activeTasks[i] != null) {
+                    if (i % 2 != 0) {
+                        activeTasks[i].style.backgroundColor = "rgb(178, 255, 255)";
+                    } else {
+                        activeTasks[i].style.backgroundColor = "rgb(255, 255, 255)";
+                    }
+                    
+                }
+
+            }
         }
 
         // draw or undraw a line through on tasks while clicked
