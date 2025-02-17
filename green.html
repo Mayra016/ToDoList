@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list</title>
+    <style>
+        /* INPUT CONTAINER */
+        :root{
+            --dark-color: #39812c;
+            --saturated-color : rgb(170, 255, 161);
+            --light-color: rgb(186, 255, 178);
+        }
+
+        /* FONTS */
+
+        @font-face {
+            font-family: 'BonheurRoyale';
+            src: url('../fonts/BonheurRoyale-Regular.ttf') format('truetype'); 
+        }
+
+        @font-face {
+            font-family: 'SourGummy';
+            src: url('../fonts/SourGummy-VariableFont_wdth,wght.ttf') format('truetype');
+        }
+
+        body {
+            background-color: transparent;
+        }
+
+
+        .title {
+            font-family: 'BonheurRoyale';
+            font-size: 40px;
+            color: rgb(58, 58, 58);
+        }
+
+        .text {
+            font-family: 'SourGummy';
+            
+            font-size: 15px;
+        }
+
+        .to-do-list {
+            width: 500px;
+            height: fit-content;
+        }
+        .insert {
+            background-color: var(--saturated-color);
+            border-radius: 10px 10px 0px 0px;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: row;
+            text-align: center;
+            width: 100%;
+            height: 50px;
+            gap: 50px;
+            border-radius: 10px 10px 0px 0px;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+        .input-task {
+            border-radius: 20px;
+            padding: 10px;
+            width: 200px;
+        }
+
+        input {
+            border-style : none;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            height: 40px;
+            background-color: var(--dark-color);
+            color: white;
+            border: none;
+            transition: transform 3 ease-in-out;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+
+        /* TASKS */
+
+        .task-container {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            width: 100%;
+        }
+
+        li, ul {
+            display: flex;
+        }
+
+        .new-tasks {
+            padding: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-right: 40px;
+            align-items: center;
+        }
+
+        .new-tasks button {
+            padding: 5px;
+            width: 40px;
+            height: 40px;
+            font-size: 30px;
+        }
+
+        .tasks-container, .tasks {
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+        }
+
+    </style>   
+</head>
+
+<body>
+
+    <div class="to-do-list">
+        <div class="insert">
+            <h1 class="title">To do list</h1>
+            <div class="input-container">
+                <input class="input-task text" placeholder="Insert task...">
+                <button class="text" onclick="update()">Insert</button>
+            </div>
+            
+        </div>
+        <div class="tasks-container">
+            <ul class="tasks text">
+
+            </ul>
+        </div>
+    </div>
+    <script>
+        var input = document.querySelector(".input-task");
+        var tasks = document.querySelector(".tasks");
+        var liList = document.getElementsByTagName("LI");
+        var taskIndex = 0;
+        var activeTasks = [];
+
+        function update() {
+            var newTaskDiv = document.createElement("div");
+            var newTask = document.createElement("li");
+            var closeBtn = document.createElement("button");
+
+            closeBtn.innerText = "\u00D7";
+            closeBtn.classList.add("close");
+            closeBtn.onclick = function () {
+                close(newTaskDiv);
+            };
+
+            newTask.innerText = input.value;
+            newTask.classList.add("task-text");
+
+            newTaskDiv.classList.add("new-tasks");
+            newTaskDiv.id = taskIndex;
+
+            if (activeTasks.length % 2 != 0) {
+                newTaskDiv.style.backgroundColor = "rgb(186, 255, 178)";
+            } else {
+                newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
+            }
+
+            newTaskDiv.appendChild(newTask);
+            newTaskDiv.appendChild(closeBtn);
+            tasks.appendChild(newTaskDiv);
+            taskIndex++;
+            activeTasks.push(newTaskDiv);
+            console.log(activeTasks);
+        }
+
+        function close(newTaskDiv) {
+            //let done = document.getElementById(String(index));
+            newTaskDiv.style.display = "none";
+            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
+            updateColors()
+            console.log(activeTasks);
+        }
+
+        function updateColors() {
+            for (let i = 0; i < activeTasks.length; i++) {
+                if (activeTasks[i] != null) {
+                    if (i % 2 != 0) {
+                        activeTasks[i].style.backgroundColor = "rgb(186, 255, 178)";
+                    } else {
+                        activeTasks[i].style.backgroundColor = "rgb(255, 255, 255)";
+                    }
+                    
+                }
+
+            }
+        }
+
+        // draw or undraw a line through on tasks while clicked
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("new-tasks")) {
+                let children = event.target.children;
+                for (let i = 0; i < children.length; i++) {
+                    let child = children[i];
+                    let getStyle = getComputedStyle(child);
+
+                    if (child.tagName === "LI") { 
+                        console.log("getStyle.textDecoration", getStyle.textDecoration);
+                        if (getStyle.textDecoration == "line-through solid rgb(0, 0, 0)") {
+                            child.style.textDecoration = "none";
+                        } else {
+                            child.style.textDecoration = "line-through"; 
+                        }
+                        
+                    }
+                }
+
+            }
+        });
+
+
+        document.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                update();
+            }
+        })
+
+    </script>
+</body>
+</html>
