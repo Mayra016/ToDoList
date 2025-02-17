@@ -173,6 +173,7 @@
 
             newTaskDiv.classList.add("new-tasks");
             newTaskDiv.id = taskIndex;
+            newTaskDiv.setAttribute("draggable", "true");
 
             if (activeTasks.length % 2 != 0) {
                 newTaskDiv.style.backgroundColor = "rgb(193, 178, 255)";
@@ -245,6 +246,45 @@
                 }             
             }
         })
+
+        // drag and drop functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            let draggedItem = null;
+
+            document.addEventListener("dragstart", function (event) {
+                if (event.target.classList.contains("new-tasks")) {
+                    draggedItem = event.target;
+                    setTimeout(() => event.target.style.display = "none", 0);
+                }
+            });
+
+            document.addEventListener("dragover", function (event) {
+                event.preventDefault(); 
+            });
+
+            document.addEventListener("drop", function (event) {
+                event.preventDefault();
+                if (event.target.classList.contains("new-tasks")) {
+                    let parent = event.target.parentNode;
+                    let referenceNode = event.target.nextSibling === draggedItem ? event.target.nextSibling.nextSibling : event.target;
+                    parent.insertBefore(draggedItem, referenceNode);
+                }
+                
+                // Update active tasks array 
+                activeTasks = Array.from(document.querySelectorAll(".new-tasks"));
+
+                draggedItem.style.display = "flex";
+                draggedItem = null;
+
+                updateColors();
+            });
+
+            document.addEventListener("dragend", function (event) {
+                if (draggedItem) {
+                    draggedItem.style.display = "flex";
+                }
+            });
+        });
 
         document.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
