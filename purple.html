@@ -220,7 +220,7 @@
 
                     if (child.tagName === "LI") { 
                         console.log("getStyle.textDecoration", getStyle.textDecoration);
-                        if (getStyle.textDecoration == "line-through solid rgb(0, 0, 0)") {
+                        if (getStyle.textDecoration.startsWith("line-through")) {
                             child.style.textDecoration = "none";
                         } else {
                             child.style.textDecoration = "line-through"; 
