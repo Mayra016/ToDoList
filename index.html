@@ -156,7 +156,7 @@
             closeBtn.innerText = "\u00D7";
             closeBtn.classList.add("close");
             closeBtn.onclick = function () {
-                close(taskIndex);
+                close(newTaskDiv);
             };
 
             newTask.innerText = input.value;
@@ -177,9 +177,9 @@
             taskIndex++;
         }
 
-        function close(index) {
-            let done = document.getElementById(String(index));
-            done.style.display = "none";
+        function close(newTaskDiv) {
+            //let done = document.getElementById(String(index));
+            newTaskDiv.style.display = "none";
         }
 
         // draw or undraw a line through on tasks while clicked
