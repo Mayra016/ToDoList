@@ -160,6 +160,7 @@
             };
 
             newTask.innerText = input.value;
+            newTask.classList.add("task-text");
 
             newTaskDiv.classList.add("new-tasks");
             newTaskDiv.id = taskIndex;
@@ -180,6 +181,28 @@
             let done = document.getElementById(String(index));
             done.style.display = "none";
         }
+
+        // draw or undraw a line through on tasks while clicked
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("new-tasks")) {
+                let children = event.target.children;
+                for (let i = 0; i < children.length; i++) {
+                    let child = children[i];
+                    let getStyle = getComputedStyle(child);
+
+                    if (child.tagName === "LI") { 
+                        console.log("getStyle.textDecoration", getStyle.textDecoration);
+                        if (getStyle.textDecoration == "line-through solid rgb(0, 0, 0)") {
+                            child.style.textDecoration = "none";
+                        } else {
+                            child.style.textDecoration = "line-through"; 
+                        }
+                        
+                    }
+                }
+
+            }
+        });
 
     </script>
 </body>
