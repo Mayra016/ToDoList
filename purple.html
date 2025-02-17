@@ -232,6 +232,19 @@
             }
         });
 
+        // mark and unmark task as active
+        document.addEventListener('dblclick', function() {
+            if (event.target.classList.contains("new-tasks")) {
+                let getStyle = getComputedStyle(event.target);
+                if (getStyle.borderStyle == "none") {
+                    event.target.style.borderColor = "#6247c5";
+                    event.target.style.borderWidth = "3px";
+                    event.target.style.borderStyle = "solid";
+                } else {
+                    event.target.style.borderStyle = "none";
+                }             
+            }
+        })
 
         document.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
