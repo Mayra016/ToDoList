@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List: Home</title>
+    <style>
+        h1 {
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-size: 50px;
+            font-weight: 400;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .templates {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .templates-line {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .img {
+            margin:10px;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        button {
+            border-radius: 10px;
+            width: 200px;
+            font-size: 25px;
+            padding: 15px;
+            background-color: rgb(45, 45, 45);
+            color: aliceblue;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            transition: transform 3 ease-in-out;
+            box-shadow: 5px 5px 5px rgb(54, 54, 54);
+            border-style: none;
+            
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        .template{ 
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <main>
+        <div class="title">
+            <h1>Choose your template</h1>
+        </div>
+        <div class="templates">
+            <div class="templates-line">
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/blue.png" alt="blue-template">
+                    </div>
+                    <button onclick="redirect(1)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/blue-pixel.png" alt="blue-pixel-template">
+                    </div>
+                    <button onclick="redirect(2)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/pink.png" alt="template">
+                    </div>
+                    <button onclick="redirect(3)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/pink-pixel.png" alt="template">
+                    </div>
+                    <button onclick="redirect(4)">Use template</button>
+                </div>
+            </div>
+            <div class="templates-line">
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/purple.png" alt="template">
+                    </div>
+                    <button onclick="redirect(5)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/purple-pixel.png" alt="template">
+                    </div>
+                    <button onclick="redirect(6)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/green.png" alt="template">
+                    </div>
+                    <button onclick="redirect(7)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/green-pixel.png" alt="template">
+                    </div>
+                    <button onclick="redirect(8)">Use template</button>
+                </div>
+            </div>
+            <div class="templates-line">
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/yellow.png" alt="template">
+                    </div>
+                    <button onclick="redirect(9)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/yellow-pixel.png" alt="template">
+                    </div>
+                    <button onclick="redirect(10)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/black.png" alt="template">
+                    </div>
+                    <button onclick="redirect(11)">Use template</button>
+                </div>
+                <div class="template">
+                    <div class="img">
+                        <img src="assets/black-pixel.png" alt="template">
+                    </div>
+                    <button onclick="redirect(12)">Use template</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function redirect(value) {
+            if (value == 1) {
+                window.location.href = "blue.html";
+            }
+            if (value == 2) {
+                window.location.href = "blue-pixel.html";
+            }
+            if (value == 3) {
+                window.location.href = "pink.html";
+            }
+            if (value == 4) {
+                window.location.href = "pink-pixel.html";
+            }
+            if (value == 5) {
+                window.location.href = "purple.html";
+            }
+            if (value == 6) {
+                window.location.href = "purple-pixel.html";
+            }
+            if (value == 7) {
+                window.location.href = "green.html";
+            }
+            if (value == 8) {
+                window.location.href = "green-pixel.html";
+            }
+            if (value == 9) {
+                window.location.href = "yellow.html";
+            }
+            if (value == 10) {
+                window.location.href = "yellow-pixel.html";
+            }
+            if (value == 11) {
+                window.location.href = "black.html";
+            }
+            if (value == 12) {
+                window.location.href = "black-pixel.html";
+            }
+        }
+    </script>
+</body>
+</html>
