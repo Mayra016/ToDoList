@@ -198,17 +198,17 @@
         }
 
         function close(taskElement) {
-
             let index = 0;
+            let indexEffect = -2;
 
             for (let x = 0; x < activeTasks.length; x++) {
                 if (activeTasks[x] == taskElement) {
                     index = x;
-                    console.log("element ", activeTasks[x]);
-                    console.log("element ", taskElement);
+                }
+                if (activeEffect[x] == taskElement) {
+                    indexEffect = x;
                 }
             }
-            console.log("idd", index);
 
             if (index !== -1) {
                 activeTasks.splice(index, 1);
@@ -217,23 +217,39 @@
                     task.id = index;
                 });
                 taskIndex = activeTasks.length - 1;
-                activeEffect[taskElement.id] = "null"; 
+                activeEffect[i] = indexEffect > -2 ? "null" : activeEffect[i]; 
                 updateColors(); 
                 saveData();
             }
         }
 
         function updateColors() {
+            console.log("activeEffects", activeEffect);
             for (let i = 0; i < activeTasks.length; i++) {
                 if (activeTasks[i] != null) {
+
+
+                    if (getComputedStyle(activeTasks[i]).borderStyle != "none") {
+                        activeTasks[i].style.borderWidth = "3px";
+                        activeTasks[i].style.borderStyle = "dashed";
+
+                        console.log("AAAAA", );
+
+                        if (String(activeTasks[i].style.borderColor).includes("255")) {
+                            console.log("BBBBB", );
+                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
+                        }
+                        if (String(activeTasks[i].style.borderColor).includes("0")) {
+                            activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
+                            console.log("CCC", );
+                        }
+                    } else {
+                        console.log("no encuentra", activeTasks[i].style.borderColor);
+                    }
+
                     if (i % 2 != 0) {
                         activeTasks[i].style.backgroundColor = "rgb(0, 0, 0)";
                         activeTasks[i].style.color = "rgb(255, 255, 255)";
-
-                        if (activeEffect.includes(activeTasks[i])) {
-                            activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
-                        }    
-
                         let children = activeTasks[i].children;
                         for (let x = 0; x < children.length; x++) {
                             let child = children[x];
@@ -242,20 +258,11 @@
                                 child.style.backgroundColor = "rgb(255, 255, 255)";  
                                 child.style.color = "rgb(0, 0, 0)";                        
                             }
-
-                        
                         }
-
-                        
                         
                     } else {
                         activeTasks[i].style.backgroundColor = "rgb(255, 255, 255)";
                         activeTasks[i].style.color = "rgb(0, 0, 0)";
-
-                        if (activeEffect.includes(activeTasks[i])) {
-                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
-                        }   
-
                         let children = activeTasks[i].children;
                         for (let x = 0; x < children.length; x++) {
                             let child = children[x];
@@ -266,20 +273,13 @@
                             }
                         }
                     }
-                    
-                    if (activeEffect.includes(activeTasks[i])) {
-                        console.log("detecta");
-                        activeTasks[i].style.borderWidth = "3px";
-                        activeTasks[i].style.borderStyle = "dashed";
 
-                        if (activeTasks[i].style.backgroundColor === "rgb(0, 0, 0)") {
-                            activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
-                        }
-                        if (activeTasks[i].style.backgroundColor === "rgb(255, 255, 255)") {
-                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
-                        }        
-                    }    
+                    
+                    
+
                 }
+
+                
 
             }
         }

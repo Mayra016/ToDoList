@@ -200,18 +200,56 @@
             saveData();
         }
 
-        function close(newTaskDiv) {
-            //let done = document.getElementById(String(index));
-            newTaskDiv.style.display = "none";
-            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
-            activeEffect[newTaskDiv.id] = "null";  
-            updateColors()
-            saveData();
+        function close(taskElement) {
+            let index = 0;
+            let indexEffect = -2;
+
+            for (let x = 0; x < activeTasks.length; x++) {
+                if (activeTasks[x] == taskElement) {
+                    index = x;
+                }
+                if (activeEffect[x] == taskElement) {
+                    indexEffect = x;
+                }
+            }
+
+            if (index !== -1) {
+                activeTasks.splice(index, 1);
+                taskElement.remove();
+                activeTasks.forEach((task, index) => {
+                    task.id = index;
+                });
+                taskIndex = activeTasks.length - 1;
+                activeEffect[i] = indexEffect > -2 ? "null" : activeEffect[i]; 
+                updateColors(); 
+                saveData();
+            }
         }
 
         function updateColors() {
+            console.log("activeEffects", activeEffect);
             for (let i = 0; i < activeTasks.length; i++) {
                 if (activeTasks[i] != null) {
+
+
+                    if (getComputedStyle(activeTasks[i]).borderStyle != "none") {
+                        activeTasks[i].style.borderWidth = "3px";
+                        activeTasks[i].style.borderStyle = "dashed";
+
+                        console.log("AAAAA", );
+
+                        if (String(activeTasks[i].style.borderColor).includes("255")) {
+                            console.log("BBBBB", );
+                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
+                        }
+                        if (String(activeTasks[i].style.borderColor).includes("0")) {
+                            activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
+                            console.log("CCC", );
+                        }
+                    } else {
+                        console.log("no encuentra", activeTasks[i].style.borderColor);
+                    }
+
                     if (i % 2 != 0) {
                         activeTasks[i].style.backgroundColor = "rgb(0, 0, 0)";
                         activeTasks[i].style.color = "rgb(255, 255, 255)";
@@ -238,8 +276,13 @@
                             }
                         }
                     }
+
                     
+                    
+
                 }
+
+                
 
             }
         }
@@ -362,50 +405,73 @@
 
         function loadData() {
             let tasksData = JSON.parse(localStorage.getItem("tasks") || "[]");
-
+            console.log("tasksData",tasksData);
             for (let i = 0; i < tasksData.length; i++) {
-                var newTaskDiv = document.createElement("div");
-                var newTask = document.createElement("li");
-                var closeBtn = document.createElement("button");
+                var newTaskDivLoad = document.createElement("div");
+                var newTaskLoad = document.createElement("li");
+                var closeBtnLoad = document.createElement("button");
 
-                closeBtn.innerText = "\u00D7";
-                closeBtn.classList.add("close");
-                closeBtn.onclick = function () {
-                    close(newTaskDiv);
-                };
+                closeBtnLoad.innerText = "\u00D7";
+                closeBtnLoad.classList.add("close");
+                closeBtnLoad.onclick = (function(div) {
+                    return function() {
+                        close(div);
+                    };
+                })(newTaskDivLoad);
 
-                newTask.innerText = tasksData[i]["text"];
+
+                newTaskLoad.innerText = tasksData[i]["text"];
                 if (tasksData[i]["lineThrough"] == true) {
-                    newTask.style.textDecoration = "line-through";
+                    newTaskLoad.style.textDecoration = "line-through";
                 }
                 if (tasksData[i]["isActive"] == true) {
-                    newTaskDiv.style.borderWidth = "3px";
-                    newTaskDiv.style.borderStyle = "dashed";
-                    activeEffect[i] = newTaskDiv;
+
+                    newTaskDivLoad.style.borderWidth = "3px";
+                    newTaskDivLoad.style.borderStyle = "dashed";
+                    if (i % 2 != 0) {
+                        newTaskDivLoad.style.borderColor = "rgb(255, 255, 255)";
+                    } else {
+                        newTaskDivLoad.style.borderColor = "rgb(0, 0, 0)";
+                    }
+                    
+
+                    activeEffect.push(newTaskDivLoad);
                 }
-                taskIndex = i;
+                
 
-                newTask.classList.add("task-text");
+                newTaskLoad.classList.add("task-text");
 
-                newTaskDiv.classList.add("new-tasks");
-                newTaskDiv.id = taskIndex;
-                newTaskDiv.setAttribute("draggable", "true");
+                newTaskDivLoad.classList.add("new-tasks");
+                newTaskDivLoad.id = taskIndex;
+                taskIndex++;
+                newTaskDivLoad.setAttribute("draggable", "true");
 
                 if (activeTasks.length % 2 != 0) {
-                    newTaskDiv.style.backgroundColor = "rgb(0, 0, 0)";
-                    newTaskDiv.style.color = "rgb(255, 255, 255)";
-                    newTaskDiv.style.borderColor = "rgb(255, 255, 255)";
+                    newTaskDivLoad.style.backgroundColor = "rgb(0, 0, 0)";
+                    newTaskDivLoad.style.color = "rgb(255, 255, 255)";
+                    closeBtnLoad.style.backgroundColor = "rgb(255, 255, 255)";
+                    closeBtnLoad.style.color = "rgb(0, 0, 0)";
                 } else {
-                    newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
-                    newTaskDiv.style.color = "rgb(0, 0, 0)";
-                    newTaskDiv.style.borderColor = "rgb(0, 0, 0)";
+                    newTaskDivLoad.style.backgroundColor = "rgb(255, 255, 255)";
+                    newTaskDivLoad.style.color = "rgb(0, 0, 0)";
+                    closeBtnLoad.style.backgroundColor = "rgb(0, 0, 0)";
+                    closeBtnLoad.style.color = "rgb(255, 255, 255)";
                 }
 
                 
-                newTaskDiv.appendChild(newTask);
-                newTaskDiv.appendChild(closeBtn);
-                tasks.appendChild(newTaskDiv);
-                activeTasks.push(newTaskDiv);
+                
+                newTaskDivLoad.appendChild(newTaskLoad);
+                newTaskDivLoad.appendChild(closeBtnLoad);
+                tasks.appendChild(newTaskDivLoad);
+                activeTasks.push(newTaskDivLoad);
+                
+                closeBtnLoad.addEventListener('click', function() {
+                    let containerId = newTaskDivLoad.id;
+                    console.log("container id", containerId);
+                });
+                console.log("active tasks json", activeTasks);
+  
+                
             }
         }
 
