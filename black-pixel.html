@@ -225,7 +225,6 @@
         }
 
         function updateColors() {
-            console.log("activeEffects", activeEffect);
             for (let i = 0; i < activeTasks.length; i++) {
                 if (activeTasks[i] != null) {
 
@@ -234,18 +233,12 @@
                         activeTasks[i].style.borderWidth = "3px";
                         activeTasks[i].style.borderStyle = "dashed";
 
-                        console.log("AAAAA", );
-
                         if (String(activeTasks[i].style.borderColor).includes("255")) {
-                            console.log("BBBBB", );
                             activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
                         }
                         if (String(activeTasks[i].style.borderColor).includes("0")) {
                             activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
-                            console.log("CCC", );
                         }
-                    } else {
-                        console.log("no encuentra", activeTasks[i].style.borderColor);
                     }
 
                     if (i % 2 != 0) {
@@ -294,7 +287,6 @@
                     let getStyle = getComputedStyle(child);
 
                     if (child.tagName === "LI") { 
-                        console.log("getStyle.textDecoration", getStyle.textDecoration);
                         if (getStyle.textDecoration.startsWith("line-through")) {
                             child.style.textDecoration = "none";
                         } else {
@@ -379,12 +371,9 @@
         // save tasks
         
         function saveData() {
-            console.log("save ", activeTasks);
 
             let tasksData = activeTasks.map(task => {
                 let li = task.children[0]; 
-
-                if (li) console.log("nuuull", li);
 
                 return {
                     text: li.innerText,
@@ -392,8 +381,6 @@
                     isActive: this.activeEffect.includes(task) 
                 };
             });
-
-            console.log("json", tasksData);
 
             localStorage.setItem("tasks", JSON.stringify(tasksData));
 
@@ -403,7 +390,7 @@
 
         function loadData() {
             let tasksData = JSON.parse(localStorage.getItem("tasks") || "[]");
-            console.log("tasksData",tasksData);
+
             for (let i = 0; i < tasksData.length; i++) {
                 var newTaskDivLoad = document.createElement("div");
                 var newTaskLoad = document.createElement("li");
@@ -461,15 +448,7 @@
                 newTaskDivLoad.appendChild(newTaskLoad);
                 newTaskDivLoad.appendChild(closeBtnLoad);
                 tasks.appendChild(newTaskDivLoad);
-                activeTasks.push(newTaskDivLoad);
-                
-                closeBtnLoad.addEventListener('click', function() {
-                    let containerId = newTaskDivLoad.id;
-                    console.log("container id", containerId);
-                });
-                console.log("active tasks json", activeTasks);
-  
-                
+                activeTasks.push(newTaskDivLoad);  
             }
         }
 
