@@ -153,6 +153,7 @@
         var liList = document.getElementsByTagName("LI");
         var taskIndex = 0;
         var activeTasks = [];
+        var activeEffect = [];
 
         function update() {
             var newTaskDiv = document.createElement("div");
@@ -183,15 +184,29 @@
             tasks.appendChild(newTaskDiv);
             taskIndex++;
             activeTasks.push(newTaskDiv);
-            console.log(activeTasks);
+            saveData();
         }
 
-        function close(newTaskDiv) {
-            //let done = document.getElementById(String(index));
-            newTaskDiv.style.display = "none";
-            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
-            updateColors()
-            console.log(activeTasks);
+        function close(taskElement) {
+            let index = 0;
+
+            for (let x = 0; x < activeTasks.length; x++) {
+                if (activeTasks[x] == taskElement) {
+                    index = x;
+                }
+            }
+
+            if (index !== -1) {
+                activeTasks.splice(index, 1);
+                taskElement.remove();
+                activeTasks.forEach((task, index) => {
+                    task.id = index;
+                });
+                taskIndex = activeTasks.length - 1;
+                activeEffect[taskElement.id] = "null"; 
+                updateColors(); 
+                saveData();
+            }
         }
 
         function updateColors() {
@@ -217,7 +232,6 @@
                     let getStyle = getComputedStyle(child);
 
                     if (child.tagName === "LI") { 
-                        console.log("getStyle.textDecoration", getStyle.textDecoration);
                         if (getStyle.textDecoration == "line-through solid rgb(0, 0, 0)") {
                             child.style.textDecoration = "none";
                         } else {
@@ -228,6 +242,7 @@
                 }
 
             }
+            saveData();
         });
 
         // mark and unmark task as active
@@ -238,10 +253,13 @@
                     event.target.style.borderColor = "#2c698";
                     event.target.style.borderWidth = "3px";
                     event.target.style.borderStyle = "solid";
+                    activeEffect[event.target.id] = event.target;
                 } else {
+                    activeEffect = activeEffect.filter(task => task !== event.target);
                     event.target.style.borderStyle = "none";
                 }             
             }
+            saveData();
         })
 
         // drag and drop functionality
@@ -274,6 +292,7 @@
                 draggedItem = null;
 
                 updateColors();
+                saveData();
             });
 
             document.addEventListener("dragend", function (event) {
@@ -288,6 +307,80 @@
                 update();
             }
         })
+
+        // save tasks
+        
+        function saveData() {
+            let tasksData = activeTasks.map(task => {
+                let li = task.children[0]; 
+
+                return {
+                    text: li.innerText,
+                    lineThrough: li.style.textDecoration === "line-through" ? true : false,
+                    isActive: this.activeEffect.includes(task) 
+                };
+            });
+
+
+            localStorage.setItem("tasks", JSON.stringify(tasksData));
+
+        }
+
+        // load saved tasks from local storage
+
+        function loadData() {
+            let tasksData = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+            for (let i = 0; i < tasksData.length; i++) {
+                var newTaskDivLoad = document.createElement("div");
+                var newTaskLoad = document.createElement("li");
+                var closeBtnLoad = document.createElement("button");
+
+                closeBtnLoad.innerText = "\u00D7";
+                closeBtnLoad.classList.add("close");
+                closeBtnLoad.onclick = (function(div) {
+                    return function() {
+                        close(div);
+                    };
+                })(newTaskDivLoad);
+
+
+                newTaskLoad.innerText = tasksData[i]["text"];
+                if (tasksData[i]["lineThrough"] == true) {
+                    newTaskLoad.style.textDecoration = "line-through";
+                }
+                if (tasksData[i]["isActive"] == true) {
+                    newTaskDivLoad.style.borderColor = "#2c698";
+                    newTaskDivLoad.style.borderWidth = "3px";
+                    newTaskDivLoad.style.borderStyle = "solid";
+                    activeEffect.push(newTaskDivLoad);
+                }
+                
+
+                newTaskLoad.classList.add("task-text");
+
+                newTaskDivLoad.classList.add("new-tasks");
+                newTaskDivLoad.id = taskIndex;
+                taskIndex++;
+                newTaskDivLoad.setAttribute("draggable", "true");
+
+                if (activeTasks.length % 2 != 0) {
+                    newTaskDivLoad.style.backgroundColor = "rgb(178, 255, 255)";
+                } else {
+                    newTaskDivLoad.style.backgroundColor = "rgb(255, 255, 255)";
+                }
+
+                
+                
+                newTaskDivLoad.appendChild(newTaskLoad);
+                newTaskDivLoad.appendChild(closeBtnLoad);
+                tasks.appendChild(newTaskDivLoad);
+                activeTasks.push(newTaskDivLoad);
+                
+            }
+        }
+
+        loadData();
 
     </script>
 </body>

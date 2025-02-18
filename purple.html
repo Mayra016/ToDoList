@@ -156,6 +156,7 @@
         var liList = document.getElementsByTagName("LI");
         var taskIndex = 0;
         var activeTasks = [];
+        var activeEffect = [];
 
         function update() {
             var newTaskDiv = document.createElement("div");
@@ -186,15 +187,15 @@
             tasks.appendChild(newTaskDiv);
             taskIndex++;
             activeTasks.push(newTaskDiv);
-            console.log(activeTasks);
+            saveData();
         }
 
         function close(newTaskDiv) {
             //let done = document.getElementById(String(index));
             newTaskDiv.style.display = "none";
             activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
-            updateColors()
-            console.log(activeTasks);
+            updateColors();
+            saveData();
         }
 
         function updateColors() {
@@ -220,7 +221,6 @@
                     let getStyle = getComputedStyle(child);
 
                     if (child.tagName === "LI") { 
-                        console.log("getStyle.textDecoration", getStyle.textDecoration);
                         if (getStyle.textDecoration.startsWith("line-through")) {
                             child.style.textDecoration = "none";
                         } else {
@@ -231,6 +231,7 @@
                 }
 
             }
+            saveData();
         });
 
         // mark and unmark task as active
@@ -241,10 +242,13 @@
                     event.target.style.borderColor = "#6247c5";
                     event.target.style.borderWidth = "3px";
                     event.target.style.borderStyle = "solid";
+                    activeEffect[event.target.id] = event.target;
                 } else {
+                    activeEffect = activeEffect.filter(task => task !== event.target);
                     event.target.style.borderStyle = "none";
                 }             
             }
+            saveData();
         })
 
         // drag and drop functionality
@@ -277,6 +281,7 @@
                 draggedItem = null;
 
                 updateColors();
+                saveData();
             });
 
             document.addEventListener("dragend", function (event) {
@@ -291,6 +296,73 @@
                 update();
             }
         })
+
+        // save tasks
+        
+        function saveData() {
+
+            let tasksData = activeTasks.map(task => {
+                let li = task.children[0]; 
+
+                return {
+                    text: li.innerText,
+                    lineThrough: li.style.textDecoration === "line-through" ? true : false,
+                    isActive: this.activeEffect.includes(task) 
+                };
+            });
+
+            localStorage.setItem("tasks", JSON.stringify(tasksData));
+
+        }
+
+        // load saved tasks from local storage
+
+        function loadData() {
+            let tasksData = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+            for (let i = 0; i < tasksData.length; i++) {
+                var newTaskDiv = document.createElement("div");
+                var newTask = document.createElement("li");
+                var closeBtn = document.createElement("button");
+
+                closeBtn.innerText = "\u00D7";
+                closeBtn.classList.add("close");
+                closeBtn.onclick = function () {
+                    close(newTaskDiv);
+                };
+
+                newTask.innerText = tasksData[i]["text"];
+                if (tasksData[i]["lineThrough"] == true) {
+                    newTask.style.textDecoration = "line-through";
+                }
+                if (tasksData[i]["isActive"] == true) {
+                    newTaskDiv.style.borderColor = "#6247c5";
+                    newTaskDiv.style.borderWidth = "3px";
+                    newTaskDiv.style.borderStyle = "solid";
+                    activeEffect[i] = newTaskDiv;
+                }
+                taskIndex = i;
+
+                newTask.classList.add("task-text");
+
+                newTaskDiv.classList.add("new-tasks");
+                newTaskDiv.id = taskIndex;
+                newTaskDiv.setAttribute("draggable", "true");
+
+                if (activeTasks.length % 2 != 0) {
+                    newTaskDiv.style.backgroundColor = "rgb(193, 178, 255)";
+                } else {
+                    newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
+                }
+
+                newTaskDiv.appendChild(newTask);
+                newTaskDiv.appendChild(closeBtn);
+                tasks.appendChild(newTaskDiv);
+                activeTasks.push(newTaskDiv);
+            }
+        }
+
+        loadData();
 
     </script>
 </body>

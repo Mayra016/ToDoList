@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>To do list</title>
     <style>
         /* INPUT CONTAINER */
@@ -16,12 +22,12 @@
 
         @font-face {
             font-family: 'BonheurRoyale';
-            src: url('../fonts/BonheurRoyale-Regular.ttf') format('truetype'); 
+            src: url('~/Documentos/ToDoList/fonts/BonheurRoyale-Regular.ttf') format('truetype'); 
         }
 
         @font-face {
             font-family: 'SourGummy';
-            src: url('../fonts/SourGummy-VariableFont_wdth,wght.ttf') format('truetype');
+            src: url('~/Documentos/ToDoList/fonts/SourGummy-VariableFont_wdth,wght.ttf') format('truetype');
         }
 
         body {
@@ -30,13 +36,13 @@
 
 
         .title {
-            font-family: 'BonheurRoyale';
+            font-family: "Bonheur Royale", "BonheurRoyale";
             font-size: 50px;
             color: rgb(58, 58, 58);
         }
 
         .text {
-            font-family: 'SourGummy';
+            font-family: "Sour Gummy", 'SourGummy';
             
             font-size: 25px;
         }
@@ -159,6 +165,7 @@
         var activeTasks = [];
         var activeEffect = [];
 
+
         function update() {
             var newTaskDiv = document.createElement("div");
             var newTask = document.createElement("li");
@@ -192,12 +199,29 @@
             console.log(activeTasks);
         }
 
-        function close(newTaskDiv) {
-            newTaskDiv.style.display = "none";
-            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
-            updateColors();
-            saveData();
+        function close(taskElement) {
+
+            let index = 0;
+
+            for (let x = 0; x < activeTasks.length; x++) {
+                if (activeTasks[x] == taskElement) {
+                    index = x;
+                }
+            }
+
+            if (index !== -1) {
+                activeTasks.splice(index, 1);
+                taskElement.remove();
+                activeTasks.forEach((task, index) => {
+                    task.id = index;
+                });
+                taskIndex = activeTasks.length - 1;
+                activeEffect[taskElement.id] = "null"; 
+                updateColors(); 
+                saveData();
+            }
         }
+
 
         function updateColors() {
             for (let i = 0; i < activeTasks.length; i++) {
@@ -216,13 +240,13 @@
         // draw or undraw a line through on tasks while clicked
         document.addEventListener("click", function(event) {
             if (event.target.classList.contains("new-tasks")) {
+
                 let children = event.target.children;
                 for (let i = 0; i < children.length; i++) {
                     let child = children[i];
                     let getStyle = getComputedStyle(child);
 
                     if (child.tagName === "LI") { 
-                        console.log("getStyle.textDecoration", getStyle.textDecoration);
                         if (getStyle.textDecoration.startsWith("line-through")) {
                             child.style.textDecoration = "none";
                         } else {
@@ -233,6 +257,7 @@
                 }
 
             }
+            
             saveData();
         });
 
@@ -279,6 +304,10 @@
                 // Update active tasks array 
                 activeTasks = Array.from(document.querySelectorAll(".new-tasks"));
 
+                for (let i = 0; i < activeTasks.length; i++) {
+                    activeTasks[i].id = i;
+                }
+
                 draggedItem.style.display = "flex";
                 draggedItem = null;
 
@@ -297,13 +326,12 @@
             if (event.key === "Enter") {
                 update();
             }
-        })
+        });
 
 
         // save tasks
         
         function saveData() {
-            console.log("save ", activeTasks);
 
             let tasksData = activeTasks.map(task => {
                 let li = task.children[0]; 
@@ -317,61 +345,70 @@
                 };
             });
 
-            console.log("json", tasksData);
 
             localStorage.setItem("tasks", JSON.stringify(tasksData));
 
         }
 
-        // load saved tasks from local storage
+        //load saved tasks from local storage
 
         function loadData() {
+         
             let tasksData = JSON.parse(localStorage.getItem("tasks") || "[]");
 
             for (let i = 0; i < tasksData.length; i++) {
-                var newTaskDiv = document.createElement("div");
-                var newTask = document.createElement("li");
-                var closeBtn = document.createElement("button");
+                var newTaskDivLoad = document.createElement("div");
+                var newTaskLoad = document.createElement("li");
+                var closeBtnLoad = document.createElement("button");
 
-                closeBtn.innerText = "\u00D7";
-                closeBtn.classList.add("close");
-                closeBtn.onclick = function () {
-                    close(newTaskDiv);
-                };
+                closeBtnLoad.innerText = "\u00D7";
+                closeBtnLoad.classList.add("close");
+                closeBtnLoad.onclick = (function(div) {
+                    return function() {
+                        close(div);
+                    };
+                })(newTaskDivLoad);
 
-                newTask.innerText = tasksData[i]["text"];
+
+                newTaskLoad.innerText = tasksData[i]["text"];
                 if (tasksData[i]["lineThrough"] == true) {
-                    newTask.style.textDecoration = "line-through";
+                    newTaskLoad.style.textDecoration = "line-through";
                 }
                 if (tasksData[i]["isActive"] == true) {
-                    newTaskDiv.style.borderColor = "#2c698";
-                    newTaskDiv.style.borderWidth = "3px";
-                    newTaskDiv.style.borderStyle = "solid";
-                    activeEffect[i] = newTaskDiv;
+                    newTaskDivLoad.style.borderColor = "#2c698";
+                    newTaskDivLoad.style.borderWidth = "3px";
+                    newTaskDivLoad.style.borderStyle = "solid";
+                    activeEffect.push(newTaskDivLoad);
                 }
-                taskIndex = i;
+                
 
-                newTask.classList.add("task-text");
+                newTaskLoad.classList.add("task-text");
 
-                newTaskDiv.classList.add("new-tasks");
-                newTaskDiv.id = taskIndex;
-                newTaskDiv.setAttribute("draggable", "true");
+                newTaskDivLoad.classList.add("new-tasks");
+                newTaskDivLoad.id = taskIndex;
+                taskIndex++;
+                newTaskDivLoad.setAttribute("draggable", "true");
 
                 if (activeTasks.length % 2 != 0) {
-                    newTaskDiv.style.backgroundColor = "rgb(178, 255, 255)";
+                    newTaskDivLoad.style.backgroundColor = "rgb(178, 255, 255)";
                 } else {
-                    newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
+                    newTaskDivLoad.style.backgroundColor = "rgb(255, 255, 255)";
                 }
 
-                newTaskDiv.appendChild(newTask);
-                newTaskDiv.appendChild(closeBtn);
-                tasks.appendChild(newTaskDiv);
-                activeTasks.push(newTaskDiv);
+                
+                
+                newTaskDivLoad.appendChild(newTaskLoad);
+                newTaskDivLoad.appendChild(closeBtnLoad);
+                tasks.appendChild(newTaskDivLoad);
+                activeTasks.push(newTaskDivLoad);
+ 
             }
+            
         }
 
-        loadData();
 
+        loadData();
+    
     </script>
 </body>
 </html>
