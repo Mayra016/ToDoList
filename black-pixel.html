@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <title>To do list</title>
     <style>
         /* INPUT CONTAINER */
@@ -30,14 +32,13 @@
 
 
         .title {
-            font-family: 'Jersey15';
+            font-family: "Jersey 15", 'Jersey15';
             font-size: 40px;
             color: rgb(255, 255, 255);
         }
 
         .text {
-            font-family: 'JosefinSans';
-            
+            font-family: "Josefin Sans", 'JosefinSans';
             font-size: 25px;
         }
 
@@ -193,16 +194,33 @@
             tasks.appendChild(newTaskDiv);
             taskIndex++;
             activeTasks.push(newTaskDiv);
-            console.log(activeTasks);
+            saveData();
         }
 
-        function close(newTaskDiv) {
-            //let done = document.getElementById(String(index));
-            newTaskDiv.style.display = "none";
-            activeTasks = activeTasks.filter(task => task !== newTaskDiv); 
-            activeEffect[newTaskDiv.id] = "null"; 
-            updateColors()
-            console.log(activeTasks);
+        function close(taskElement) {
+
+            let index = 0;
+
+            for (let x = 0; x < activeTasks.length; x++) {
+                if (activeTasks[x] == taskElement) {
+                    index = x;
+                    console.log("element ", activeTasks[x]);
+                    console.log("element ", taskElement);
+                }
+            }
+            console.log("idd", index);
+
+            if (index !== -1) {
+                activeTasks.splice(index, 1);
+                taskElement.remove();
+                activeTasks.forEach((task, index) => {
+                    task.id = index;
+                });
+                taskIndex = activeTasks.length - 1;
+                activeEffect[taskElement.id] = "null"; 
+                updateColors(); 
+                saveData();
+            }
         }
 
         function updateColors() {
@@ -211,6 +229,11 @@
                     if (i % 2 != 0) {
                         activeTasks[i].style.backgroundColor = "rgb(0, 0, 0)";
                         activeTasks[i].style.color = "rgb(255, 255, 255)";
+
+                        if (activeEffect.includes(activeTasks[i])) {
+                            activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
+                        }    
+
                         let children = activeTasks[i].children;
                         for (let x = 0; x < children.length; x++) {
                             let child = children[x];
@@ -228,6 +251,11 @@
                     } else {
                         activeTasks[i].style.backgroundColor = "rgb(255, 255, 255)";
                         activeTasks[i].style.color = "rgb(0, 0, 0)";
+
+                        if (activeEffect.includes(activeTasks[i])) {
+                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
+                        }   
+
                         let children = activeTasks[i].children;
                         for (let x = 0; x < children.length; x++) {
                             let child = children[x];
@@ -241,16 +269,15 @@
                     
                     if (activeEffect.includes(activeTasks[i])) {
                         console.log("detecta");
-                                
-                        if (activeTasks[i].style.backgroundColor == "rgb(0, 0, 0)") {
-                            activeTasks[i].style.borderColor = "#ffffff";
-                        } else {
-                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
-                        }
-                                
                         activeTasks[i].style.borderWidth = "3px";
                         activeTasks[i].style.borderStyle = "dashed";
-                           
+
+                        if (activeTasks[i].style.backgroundColor === "rgb(0, 0, 0)") {
+                            activeTasks[i].style.borderColor = "rgb(255, 255, 255)";
+                        }
+                        if (activeTasks[i].style.backgroundColor === "rgb(255, 255, 255)") {
+                            activeTasks[i].style.borderColor = "rgb(0, 0, 0)";
+                        }        
                     }    
                 }
 
@@ -277,6 +304,7 @@
                 }
 
             }
+            saveData();
         });
 
         // mark and unmark task as active
@@ -298,6 +326,7 @@
                     event.target.style.borderStyle = "none";
                 }             
             }
+            saveData();
         })  
         
         // drag and drop functionality
@@ -330,6 +359,7 @@
                 draggedItem = null;
 
                 updateColors();
+                saveData();
             });
 
             document.addEventListener("dragend", function (event) {
@@ -345,6 +375,104 @@
             }
         })
 
+        // save tasks
+        
+        function saveData() {
+            console.log("save ", activeTasks);
+
+            let tasksData = activeTasks.map(task => {
+                let li = task.children[0]; 
+
+                if (li) console.log("nuuull", li);
+
+                return {
+                    text: li.innerText,
+                    lineThrough: li.style.textDecoration === "line-through" ? true : false,
+                    isActive: this.activeEffect.includes(task) 
+                };
+            });
+
+            console.log("json", tasksData);
+
+            localStorage.setItem("tasks", JSON.stringify(tasksData));
+
+        }
+
+        // load saved tasks from local storage
+
+        function loadData() {
+            let tasksData = JSON.parse(localStorage.getItem("tasks") || "[]");
+            console.log("tasksData",tasksData);
+            for (let i = 0; i < tasksData.length; i++) {
+                var newTaskDivLoad = document.createElement("div");
+                var newTaskLoad = document.createElement("li");
+                var closeBtnLoad = document.createElement("button");
+
+                closeBtnLoad.innerText = "\u00D7";
+                closeBtnLoad.classList.add("close");
+                closeBtnLoad.onclick = (function(div) {
+                    return function() {
+                        close(div);
+                    };
+                })(newTaskDivLoad);
+
+
+                newTaskLoad.innerText = tasksData[i]["text"];
+                if (tasksData[i]["lineThrough"] == true) {
+                    newTaskLoad.style.textDecoration = "line-through";
+                }
+                if (tasksData[i]["isActive"] == true) {
+
+                    newTaskDivLoad.style.borderWidth = "3px";
+                    newTaskDivLoad.style.borderStyle = "dashed";
+                    if (i % 2 != 0) {
+                        newTaskDivLoad.style.borderColor = "rgb(255, 255, 255)";
+                    } else {
+                        newTaskDivLoad.style.borderColor = "rgb(0, 0, 0)";
+                    }
+                    
+
+                    activeEffect.push(newTaskDivLoad);
+                }
+                
+
+                newTaskLoad.classList.add("task-text");
+
+                newTaskDivLoad.classList.add("new-tasks");
+                newTaskDivLoad.id = taskIndex;
+                taskIndex++;
+                newTaskDivLoad.setAttribute("draggable", "true");
+
+                if (activeTasks.length % 2 != 0) {
+                    newTaskDivLoad.style.backgroundColor = "rgb(0, 0, 0)";
+                    newTaskDivLoad.style.color = "rgb(255, 255, 255)";
+                    closeBtnLoad.style.backgroundColor = "rgb(255, 255, 255)";
+                    closeBtnLoad.style.color = "rgb(0, 0, 0)";
+                } else {
+                    newTaskDivLoad.style.backgroundColor = "rgb(255, 255, 255)";
+                    newTaskDivLoad.style.color = "rgb(0, 0, 0)";
+                    closeBtnLoad.style.backgroundColor = "rgb(0, 0, 0)";
+                    closeBtnLoad.style.color = "rgb(255, 255, 255)";
+                }
+
+                
+                
+                newTaskDivLoad.appendChild(newTaskLoad);
+                newTaskDivLoad.appendChild(closeBtnLoad);
+                tasks.appendChild(newTaskDivLoad);
+                activeTasks.push(newTaskDivLoad);
+                
+                closeBtnLoad.addEventListener('click', function() {
+                    let containerId = newTaskDivLoad.id;
+                    console.log("container id", containerId);
+                });
+                console.log("active tasks json", activeTasks);
+  
+                
+            }
+        }
+
+        loadData();
     </script>
 </body>
 </html>
