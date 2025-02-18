@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <title>To do list</title>
     <style>
         /* INPUT CONTAINER */
@@ -20,13 +17,13 @@
         /* FONTS */
 
         @font-face {
-            font-family: 'BonheurRoyale';
-            src: url('../fonts/BonheurRoyale-Regular.ttf') format('truetype'); 
+            font-family: 'Jersey15';
+            src: url('../fonts/Jersey15-Regular.ttf') format('truetype'); 
         }
 
         @font-face {
-            font-family: 'SourGummy';
-            src: url('../fonts/SourGummy-VariableFont_wdth,wght.ttf') format('truetype');
+            font-family: 'JosefinSans';
+            src: url('../fonts/JosefinSans-VariableFont_wght.ttf') format('truetype');
         }
 
         body {
@@ -35,13 +32,13 @@
 
 
         .title {
-            font-family: "Bonheur Royale", "BonheurRoyale";
+            font-family: "Jersey 15", 'Jersey15';
             font-size: 50px;
             color: rgb(58, 58, 58);
         }
 
         .text {
-            font-family: "Sour Gummy", 'SourGummy';  
+            font-family: "Josefin Sans", 'JosefinSans';
             font-size: 25px;
         }
 
@@ -193,7 +190,7 @@
             activeTasks.push(newTaskDiv);
             saveData();
         }
-        
+
         function close(taskElement) {
             let index = 0;
 

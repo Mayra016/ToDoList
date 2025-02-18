@@ -4,29 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bonheur+Royale&family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <title>To do list</title>
     <style>
         /* INPUT CONTAINER */
         :root{
-            --dark-color: #6247c5; 
-            --saturated-color : rgb(170, 161, 255);
-            --light-color: rgb(193, 178, 255);
+            --dark-color: rgb(58, 58, 58); 
+            --saturated-color : rgb(255, 246, 161);
+            --light-color: rgb(255, 242, 178);
         }
 
         /* FONTS */
 
         @font-face {
-            font-family: 'BonheurRoyale';
-            src: url('../fonts/BonheurRoyale-Regular.ttf') format('truetype'); 
+            font-family: 'Jersey15';
+            src: url('../fonts/Jersey15-Regular.ttf') format('truetype'); 
         }
 
         @font-face {
-            font-family: 'SourGummy';
-            src: url('../fonts/SourGummy-VariableFont_wdth,wght.ttf') format('truetype');
+            font-family: 'JosefinSans';
+            src: url('../fonts/JosefinSans-VariableFont_wght.ttf') format('truetype');
         }
 
         body {
@@ -35,13 +32,13 @@
 
 
         .title {
-            font-family: "Bonheur Royale", "BonheurRoyale";
+            font-family: "Jersey 15", 'Jersey15';
             font-size: 50px;
             color: rgb(58, 58, 58);
         }
 
         .text {
-            font-family: "Sour Gummy", 'SourGummy';  
+            font-family: "Josefin Sans", 'JosefinSans';  
             font-size: 25px;
         }
 
@@ -181,7 +178,7 @@
             newTaskDiv.setAttribute("draggable", "true");
 
             if (activeTasks.length % 2 != 0) {
-                newTaskDiv.style.backgroundColor = "rgb(193, 178, 255)";
+                newTaskDiv.style.backgroundColor = "rgb(255, 242, 178)";
             } else {
                 newTaskDiv.style.backgroundColor = "rgb(255, 255, 255)";
             }
@@ -193,8 +190,10 @@
             activeTasks.push(newTaskDiv);
             saveData();
         }
-        
+
         function close(taskElement) {
+
+            
             let index = 0;
 
             for (let x = 0; x < activeTasks.length; x++) {
@@ -202,6 +201,7 @@
                     index = x;
                 }
             }
+
 
             if (index !== -1) {
                 activeTasks.splice(index, 1);
@@ -220,7 +220,7 @@
             for (let i = 0; i < activeTasks.length; i++) {
                 if (activeTasks[i] != null) {
                     if (i % 2 != 0) {
-                        activeTasks[i].style.backgroundColor = "rgb(193, 178, 255)";
+                        activeTasks[i].style.backgroundColor = "rgb(255, 242, 178)";
                     } else {
                         activeTasks[i].style.backgroundColor = "rgb(255, 255, 255)";
                     }
@@ -247,17 +247,18 @@
                         
                     }
                 }
-
+                saveData();
             }
-            saveData();
+            
         });
+
 
         // mark and unmark task as active
         document.addEventListener('dblclick', function() {
             if (event.target.classList.contains("new-tasks")) {
                 let getStyle = getComputedStyle(event.target);
                 if (getStyle.borderStyle == "none") {
-                    event.target.style.borderColor = "#6247c5";
+                    event.target.style.borderColor = "rgb(58, 58, 58)";
                     event.target.style.borderWidth = "3px";
                     event.target.style.borderStyle = "solid";
                     activeEffect[event.target.id] = event.target;
@@ -297,7 +298,7 @@
 
                 draggedItem.style.display = "flex";
                 draggedItem = null;
-
+                
                 updateColors();
                 saveData();
             });
@@ -322,12 +323,14 @@
             let tasksData = activeTasks.map(task => {
                 let li = task.children[0]; 
 
+
                 return {
                     text: li.innerText,
                     lineThrough: li.style.textDecoration === "line-through" ? true : false,
                     isActive: this.activeEffect.includes(task) 
                 };
             });
+
 
             localStorage.setItem("tasks", JSON.stringify(tasksData));
 
@@ -357,7 +360,7 @@
                     newTaskLoad.style.textDecoration = "line-through";
                 }
                 if (tasksData[i]["isActive"] == true) {
-                    newTaskDivLoad.style.borderColor = "#6247c5";
+                    newTaskDivLoad.style.borderColor = "rgb(58, 58, 58)";
                     newTaskDivLoad.style.borderWidth = "3px";
                     newTaskDivLoad.style.borderStyle = "solid";
                     activeEffect.push(newTaskDivLoad);
@@ -372,7 +375,7 @@
                 newTaskDivLoad.setAttribute("draggable", "true");
 
                 if (activeTasks.length % 2 != 0) {
-                    newTaskDivLoad.style.backgroundColor = "rgb(193, 178, 255)";
+                    newTaskDivLoad.style.backgroundColor = "rgb(255, 242, 178)";
                 } else {
                     newTaskDivLoad.style.backgroundColor = "rgb(255, 255, 255)";
                 }
@@ -383,7 +386,7 @@
                 newTaskDivLoad.appendChild(closeBtnLoad);
                 tasks.appendChild(newTaskDivLoad);
                 activeTasks.push(newTaskDivLoad);
- 
+                   
             }
         }
 
