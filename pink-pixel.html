@@ -208,7 +208,7 @@
                     task.id = index;
                 });
                 taskIndex = activeTasks.length - 1;
-                activeEffect[taskElement.id] = "null"; 
+                activeEffect[taskElement.id] = "null";
                 updateColors(); 
                 saveData();
             }
@@ -216,6 +216,7 @@
 
         function updateColors() {
             for (let i = 0; i < activeTasks.length; i++) {
+                console.log("updatecolors");
                 if (activeTasks[i] != null) {
                     if (i % 2 != 0) {
                         activeTasks[i].style.backgroundColor = "rgb(255, 178, 208)";
@@ -245,7 +246,6 @@
                         
                     }
                 }
-
             }
             
             if (event.target.tagName === "LI") {
@@ -255,6 +255,7 @@
                 } else {
                     event.target.style.textDecoration = "line-through"; 
                 }
+                
             }
 
             saveData();
@@ -275,6 +276,35 @@
                     event.target.style.borderStyle = "none";
                 }             
             }
+
+            if (event.target.tagName === "LI") {
+                let index = -1;
+                let task = 0;
+
+                for (let i = 0; i < activeTasks.length; i++) {
+                    task = document.getElementById(i);
+
+                    if (task.children[0] == event.target) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                let taskDiv = index > -1 ? document.getElementById(index) : null;
+                if (task) {
+                    let getStyle = getComputedStyle(task);
+                    if (getStyle.borderStyle == "none") {
+                        task.style.borderColor = "#812c81";
+                        task.style.borderWidth = "3px";
+                        task.style.borderStyle = "solid";
+                        activeEffect[index] = task;
+                    } else {
+                        activeEffect = activeEffect.filter(element => element !== task);
+                        task.style.borderStyle = "none";
+                    }   
+                }
+            } 
+
             saveData();
         })
 

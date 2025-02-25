@@ -250,6 +250,14 @@
                 }
 
             }
+            if (event.target.tagName === "LI") {
+                let getStyle = getComputedStyle(event.target);
+                if (getStyle.textDecoration.startsWith("line-through")) {
+                    event.target.style.textDecoration = "none";
+                } else {
+                    event.target.style.textDecoration = "line-through"; 
+                }
+            }            
             saveData();
         });
 
@@ -268,15 +276,34 @@
                 }             
             }
             
-            if (event.target.tagName === "LI") {
-                let getStyle = getComputedStyle(event.target);
-                if (getStyle.textDecoration.startsWith("line-through")) {
-                    event.target.style.textDecoration = "none";
-                } else {
-                    event.target.style.textDecoration = "line-through"; 
-                }
-            }
 
+            if (event.target.tagName === "LI") {
+                let index = -1;
+                let task = 0;
+
+                for (let i = 0; i < activeTasks.length; i++) {
+                    task = document.getElementById(i);
+
+                    if (task.children[0] == event.target) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                let taskDiv = index > -1 ? document.getElementById(index) : null;
+                if (task) {
+                    let getStyle = getComputedStyle(task);
+                    if (getStyle.borderStyle == "none") {
+                        task.style.borderColor = "#6247c5";
+                        task.style.borderWidth = "3px";
+                        task.style.borderStyle = "solid";
+                        activeEffect[index] = task;
+                    } else {
+                        activeEffect = activeEffect.filter(element => element !== task);
+                        task.style.borderStyle = "none";
+                    }   
+                }
+            } 
             saveData();
         })
 

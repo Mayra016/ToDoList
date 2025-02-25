@@ -275,7 +275,7 @@
             if (event.target.classList.contains("new-tasks")) {
                 let getStyle = getComputedStyle(event.target);
                 if (getStyle.borderStyle == "none") {
-                    event.target.style.borderColor = "#2c698";
+                    event.target.style.borderColor = "#2c6981";
                     event.target.style.borderWidth = "3px";
                     event.target.style.borderStyle = "solid";
                     activeEffect[event.target.id] = event.target;
@@ -284,6 +284,35 @@
                     event.target.style.borderStyle = "none";
                 }             
             }
+
+            if (event.target.tagName === "LI") {
+                let index = -1;
+                let task = 0;
+
+                for (let i = 0; i < activeTasks.length; i++) {
+                    task = document.getElementById(i);
+
+                    if (task.children[0] == event.target) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                let taskDiv = index > -1 ? document.getElementById(index) : null;
+                if (task) {
+                    let getStyle = getComputedStyle(task);
+                    if (getStyle.borderStyle == "none") {
+                        task.style.borderColor = "#2c6981";
+                        task.style.borderWidth = "3px";
+                        task.style.borderStyle = "solid";
+                        activeEffect[index] = task;
+                    } else {
+                        activeEffect = activeEffect.filter(element => element !== task);
+                        task.style.borderStyle = "none";
+                    }   
+                }
+            }    
+
             saveData();
         })
 

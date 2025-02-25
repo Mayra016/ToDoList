@@ -331,6 +331,39 @@
                     event.target.style.borderStyle = "none";
                 }             
             }
+            
+            if (event.target.tagName === "LI") {
+                let index = -1;
+                let task = 0;
+
+                for (let i = 0; i < activeTasks.length; i++) {
+                    task = document.getElementById(i);
+
+                    if (task.children[0] == event.target) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                let taskDiv = index > -1 ? document.getElementById(index) : null;
+                if (task) {
+                    let getStyle = getComputedStyle(task);
+                    if (getStyle.borderStyle == "none") {
+                        if (getStyle.backgroundColor == "rgb(0, 0, 0)") {
+                            task.style.borderColor = "#ffffff";
+                        } else {
+                            task.style.borderColor = "rgb(0, 0, 0)";
+                        }
+                        task.style.borderWidth = "3px";
+                        task.style.borderStyle = "dashed";
+                        activeEffect[index] = task;
+                    } else {
+                        activeEffect = activeEffect.filter(element => element !== task);
+                        task.style.borderStyle = "none";
+                    }   
+                }
+            }   
+
             saveData();
         })        
 
