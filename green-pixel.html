@@ -265,6 +265,16 @@
                 }
                 
             }
+            
+            if (event.target.tagName === "LI") {
+                let getStyle = getComputedStyle(event.target);
+                if (getStyle.textDecoration.startsWith("line-through")) {
+                    event.target.style.textDecoration = "none";
+                } else {
+                    event.target.style.textDecoration = "line-through"; 
+                }
+            }
+
             saveData();
         })
 
